@@ -1,3 +1,21 @@
-with open("logs/auth.log", "r") as file:
-    content = file.read()    # Make sure there are 4 spaces before this line
-    print(content)           # Make sure there are 4 spaces before this line
+attempts = {}
+
+with open("logs/auth.log", "r") as  file :
+    for line in file :
+        parts = line.split()
+        position = parts.index("IP")
+        ip = parts[position +1]
+        if ip not in attempts:
+            attempts[ip] = 0
+             
+        attempts[ip] +=1
+        if "Login successful" in line :
+            print(ip,"SUCCESS")
+        else:
+             print(ip,"FAILED")
+    print("\n---LOGIN ATTEMPTS---")
+    for ip,count in attempts.items():
+        print("IP",ip,"Attempts:",count)
+
+
+
