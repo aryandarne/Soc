@@ -27,12 +27,11 @@ with open("logs/auth.log", "r") as file:
 
     for ip, count in attempts.items():
         print("IP", ip, "Attempts:", count)
+print("---SECURITY FINDINGS---")
+print("---Suspicious IPs---")
 
-    for ip, failures in failed.items():
-        print("IP", ip, "No. of Failures:", failures)
-    for ip, failures in failed.items():
-        if failures >= threshold:
-            print("\n---Suspicious IPs---")
-            print("SUSPICIOUS", "IP", ip, "FAILED ATTEMPTS:", failures)
+for ip, failures in failed.items():
+    if failures >= threshold:
+        print("SUSPICIOUS", "IP", ip, "FAILED ATTEMPTS:", failures)
 print("---SECURITY FINDINGS---")
             
