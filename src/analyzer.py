@@ -2,10 +2,6 @@ attempts = {}
 failed = {}
 threshold = 5
 success = {}
-attempts = {}
-failed = {}
-success = {}
-threshold = 5
 
 with open("logs/auth.log", "r") as file:
     for line in file:
@@ -61,11 +57,11 @@ with open("logs/auth.log", "r") as file:
 
     # Detect IPs with repeated failed logins
     for ip, failures in failed.items():
-        if failures >= threshold:
+        if attempts[ip] >= 3 and (failed[ip] / attempts[ip]) * 100 > 80:
             print(
                 "SUSPICIOUS",
                 "IP", ip,
-                "FAILED ATTEMPTS:", failures
+                "Failure percentage:", (failed[ip]/attempts[ip]) * 100 , 
             )
 
     # Detect IPs that failed repeatedly and eventually succeeded
