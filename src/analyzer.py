@@ -2,6 +2,7 @@ attempts = {}
 failed = {}
 threshold = 5
 success = {}
+users = {}
 
 with open("logs/auth.log", "r") as file:
     for line in file:
@@ -11,6 +12,11 @@ with open("logs/auth.log", "r") as file:
             continue
 
         parts = line.split()
+        if "user" not in parts :
+           continue
+        user = parts.index("user")
+        username = parts[user + 1]
+       
 
         # Skip malformed entries that don't contain an IP
         if "IP" not in parts:
@@ -18,13 +24,17 @@ with open("logs/auth.log", "r") as file:
 
         position = parts.index("IP")
         ip = parts[position + 1]
+        if ip not in users:
+           users[ip] = []
 
         # Count total login attempts
         if ip not in attempts:
             attempts[ip] = 0
+        users[ip].append(username)    
+        
+        
 
         attempts[ip] += 1
-
         # Track successful and failed logins
         if "Login successful" in line:
             print(ip, "SUCCESS")
@@ -77,3 +87,4 @@ with open("logs/auth.log", "r") as file:
                 success[ip],
                 "successful login(s)"
             )
+    print(users)
