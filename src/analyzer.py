@@ -15,7 +15,7 @@ with open("logs/auth.log", "r") as file:
         if "user" not in parts :
            continue
         user = parts.index("user")
-        username = parts[user + 1] 
+        username = parts[user + 1].strip("'")
        
 
         # Skip malformed entries that don't contain an IP
@@ -30,7 +30,7 @@ with open("logs/auth.log", "r") as file:
         # Count total login attempts
         if ip not in attempts:
             attempts[ip] = 0
-        users[ip].append(username)    #adds the username with respective ip
+        users[ip].append(username)    #adds the username with respective ip 
         
         
 
@@ -38,6 +38,8 @@ with open("logs/auth.log", "r") as file:
         # Track successful and failed logins
         if "Login successful" in line:
             print(ip, "SUCCESS")
+        if "SUCCESS" in parts :
+            success[ip] = True
 
             if ip not in success:
                 success[ip] = 1
@@ -87,4 +89,14 @@ with open("logs/auth.log", "r") as file:
                 success[ip],
                 "successful login(s)"
             )
-    print(users)
+    print("\n---MULTI-ACCOUNT ATTACK DETECTION---")
+
+
+    for ip, usernames in users.items():
+        unique_usernames = set(usernames)
+        
+        
+        if  len(unique_usernames) >= 3  :
+            print("Suspicious IP:", ip)
+            print("Unique accounts targeted:", len(unique_usernames))
+            print("Accounts:", unique_usernames)
