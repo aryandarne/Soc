@@ -1,23 +1,38 @@
-# Mini-SOC — Python Security Log Analyzer
+# Mini-SOC: Authentication Log Analyzer
 
-A small Python project I'm building to learn how SOC analysts detect suspicious authentication activity from logs.
+This is a small Python project I built while learning cybersecurity. The idea was to take a real-world SOC task — looking through authentication logs — and make a simple tool that can point out login activity worth checking.
 
-Right now, the analyzer reads authentication logs, tracks login attempts by IP address, and flags patterns that could indicate suspicious behavior. I'm building it step by step and testing each detection rule with sample logs.
+It is still a learning project, not a full SIEM or a production security tool. I wanted to understand the logic behind basic detection rules instead of only running tools and looking at their output.
 
-## What it detects
+## What it does
 
-* **Repeated failed logins** — flags IPs with multiple failed attempts.
-* **High failure rate** — identifies IPs with a high proportion of failed logins.
-* **Failed login followed by success** — flags an IP after repeated failures followed by a successful login.
-* **Multiple accounts targeted** — detects an IP attempting to log in to three or more unique usernames.
+- Reads authentication log entries from `logs/auth.log`.
+- Groups login activity by source IP address.
+- Counts login attempts and failed logins.
+- Flags IP addresses that reach the configured failed-login threshold.
+- Checks for IPs with a high proportion of failed logins.
+- Looks for repeated failed logins followed by a successful login, which can be worth investigating.
 
-These alerts highlight suspicious patterns; they don't automatically prove an attack occurred.
+The exact findings depend on the entries in the log file and the detection rules configured in `src/analyzer.py`.
 
-## Built with
+## Running it
 
-* Python
-* Linux / Kali Linux
-* Git and GitHub
+You need Python 3 installed.
+
+Clone the repository and move into the project folder:
+
+```bash
+git clone https://github.com/aryandarne/Soc.git
+cd Soc
+```
+
+Make sure the input file exists at `logs/auth.log`, then run:
+
+```bash
+python3 src/analyzer.py
+```
+
+The analyzer prints a summary of login activity and any findings triggered by its rules. It does not need any third-party Python packages at the moment.
 
 ## Project structure
 
@@ -29,29 +44,22 @@ Soc/
     └── analyzer.py
 ```
 
-## Run it
+## Why I made it
 
-Clone the repository and move into the project directory:
+I'm working toward a cybersecurity internship and wanted a project that would make me practise Python while learning how a SOC analyst might investigate authentication events. Building this helped me work with files, strings, dictionaries, counters, conditions, and simple detection logic.
 
-```bash
-git clone https://github.com/aryandarne/Soc.git
-cd Soc
-python3 src/analyzer.py
-```
+## Current limitations
 
-The analyzer uses the sample authentication log at `logs/auth.log`.
+- It analyses a local log file; it does not monitor a machine in real time.
+- The parser expects log entries in the format the code currently handles, so other log formats may need changes.
+- Its rules are deliberately simple. A flagged IP is something to investigate, not proof that an attack happened.
+- It is a learning project and should not be relied on as a production security system.
 
-## Current status
+## What I'd like to improve next
 
-The initial detection rules are implemented and have been tested against simulated authentication logs. I'm working on improving the reliability of the detections, adding automated tests, and cleaning up the output.
+- Add test cases for normal and suspicious login patterns.
+- Make log parsing more robust and easier to extend.
+- Move detection thresholds into a configuration file.
+- Add clearer reports so the reason for each alert is easy to understand.
 
-## What's next
-
-* Add automated tests for each detection rule.
-* Improve alert formatting and severity levels.
-* Make detection thresholds configurable.
-* Explore storing alerts in SQLite.
-
-## Disclaimer
-
-This is a learning project for defensive security and detection engineering. The sample logs are simulated, and the tool is intended for authorized analysis only.
+This is my first version of the project, and I'll keep improving it as I learn more about Python, networking, and security monitoring.
